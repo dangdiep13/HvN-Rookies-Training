@@ -40,6 +40,8 @@ round(SUM(salary),0) 'Sum',
 round(AVG(salary),0) 'Average'
 from employees
 
+select cast(sum(salary) as numeric (10,0)) as Sum from employees
+
 --- Exercise 9 ---
 select upper(left(last_name,1)) + lower(substring(last_name,2, len(last_name))) 'Name', len(last_name) 'Length of Name'
 from employees
@@ -50,12 +52,29 @@ order by last_name
 select employee_id, last_name, salary, salary+(salary*15.5/100) 'New Salary'
 from employees
 
+select employee_id, last_name, salary, cast((salary*1.155) as numeric (10,0)) 'New Salary'
+from employees
+
 --- Exercise 11 ---
 select e.last_name, e.department_id, d.department_id, d.department_name from employees e
 full join departments d on e.department_id = d.department_id
+
+select last_name, department_id, null as department_name from employees
+union all
+select null as last_name, department_id, department_name from departments
+
 
 --- Exercise 12 ---
 select e.employee_id, e.hire_date, e.last_name from employees e
 inner join employees manager on e.manager_id = manager.employee_id
 where manager.hire_date < e.hire_date
 and e.department_id in (select department_id from departments where location_id in (select location_id from locations where city = 'Toronto'))
+
+select e.employee_id from employees e
+inner join employees manager on e.manager_id = manager.employee_id
+where manager.hire_date < e.hire_date
+union
+select e.employee_id from employees e
+inner join departments d on e.department_id = d.department_id
+inner join locations l on d.location_id = l.location_id
+where l.city = 'Toronto'
